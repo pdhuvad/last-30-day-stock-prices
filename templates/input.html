@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Logo Nav - Start Bootstrap Template</title>
+
+    <!-- Bootstrap core CSS -->
+
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static', filename='css/logo-nav.css') }}"   rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+
+    <script type="text/javascript">
+    $(function() {
+        $("#autocomplete").autocomplete({
+            source:function(request, response) {
+                $.getJSON("{{url_for('autocomplete')}}",{
+                    q: request.term, // in flask, "q" will be the argument to look for using request.args
+                }, function(data) {
+                    response(data.matching_results); // matching_results from jsonify
+                });
+            },
+            minLength: 2,
+            select: function(event, ui) {
+                console.log(ui.item.value); // not in your question, but might help later
+            }
+        });
+    })
+    </script>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="#">
+          <img src="http://www.iphonelife.com/sites/iphonelife.com/files/siri-stocks.jpg" width="80" height="50" alt="">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Home
+                <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('graphCompany') }}">Graph</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">GitHub source</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+      <h1 class="mt-5">Monthly stock prices</h1>
+
+      <p>This simple web application provides recent 30 day stock prices for 3000 US publicly-traded companies. </p>
+       <form name="input_company" action="{{ url_for('graphCompany') }}" method='POST'>
+
+        <input name="company" type="text" id="autocomplete" class="form-control input-lg" placeholder="Enter Company"/><br>
+        <input type="checkbox" name="show_closing" value="world" checked>Closing price<br>
+        <input type="checkbox" name="show_adj_closing" value="world1" checked>Adjusted closing price<br>
+        <input type="checkbox" name="show_opening" value="world2" checked>Opening price<br>
+        <input type="checkbox" name="show_high" value="world3" checked>Daily high<br>
+        <input type="checkbox" name="show_low" value="world3" checked>Daily low<br>
+
+
+
+
+
+
+        <button type="submit">Submit</button>
+
+        </form>
+    </div>
+    <div  style=" width:1000px" >
+
+    <!-- /.container -->
+
+    <!-- Bootstrap core JavaScript -->
+
+    </div>
+  </body>
+
+</html>
