@@ -68,28 +68,32 @@ def request_api(host, path, api_key, url_params=None):
         url_params (dict): An optional set of query parameters in the request.
 
     Returns:
-        dict: The JSON response from the request.
+        dict: The JSON/CSV response from the request.
 
     Raises:
         HTTPError: An error occurs from the HTTP request.
     """
     url_params = url_params or {}
     url = '{0}{1}'.format(host, quote(path.encode('utf8')))
-    headers = {
-        'Authorization': 'Bearer %s' % api_key,
-    }
+
 
     print(u'Querying {0} ...'.format(url))
     print('url is',url)
     response = requests.request('GET', url, headers=None, params=url_params)
     return pd.read_csv(io.StringIO(response.text))
 
+
+'''
+DATA Souce: https://www.alphavantage.co
+Free API to get stock data
+'''
 API_HOST = "https://www.alphavantage.co/query?"
 SEARCH_PATH = ""
 use_key='alpha_vantage_api.key'
 with open(use_key) as keyfile:
     key_0=keyfile.readlines()
 API_KEY= key_0[0][:-1]
+
 
 
 def get_alpha_vantage_daily_adjusted(api_key, ticker):
@@ -106,21 +110,21 @@ def get_alpha_vantage_daily_adjusted(api_key, ticker):
     
 
 def build_graph(ticker,show_closing,show_adj_closing,show_opening,show_high,show_low):
-    # make a graph of closing prices from previous month
 
-    # Create some data for our plot.
-    #data = quandl.get('EOD/' + ticker)
+
     month_data = get_alpha_vantage_daily_adjusted(API_KEY,ticker)
-    month_data.timestamp = pd.to_datetime(month_data.timestamp)
-    month_data = month_data.iloc[:31]
-    print("Data columns", month_data.columns)
-    print("Data x is",month_data.timestamp)
-    print("Data y  is",month_data.close)
+    month_data.timestamp = pd.to_datetime(month_data.timestamp) # datatime formatted
+    month_data = month_data.iloc[:31] # get last 31 days only
 
-    x = month_data.timestamp # datatime formatted
+    # debug
+    #print("Data columns", month_data.columns)
+    #print("Data x is",month_data.timestamp)
+    #print("Data y  is",month_data.close)
+
+    x = month_data.timestamp
     y = month_data.close  # closing prices
  
-    # Create a heatmap from our data.
+
     plot = figure(title='Data from Alpha Vantage API',
               x_axis_label='date',
               x_axis_type='datetime',
@@ -151,23 +155,21 @@ def build_graph(ticker,show_closing,show_adj_closing,show_opening,show_high,show
 
     x_values = [month_data.timestamp]*len(y_values)
 
-    #plot.multi_line()
+    #plot.multi_line() multiline plot does manage legeds very well
     for (colr, leg, x, y) in zip(color_list, legend_list, x_values, y_values):
         my_plot = plot.line(x, y, color=colr, legend=leg)
     plot.legend.location='top_left'
     plot.legend.click_policy='hide'
-    #plot.multi_line(xs=x_values, ys=y_values, line_color=Spectral11[0:len(y_values)], alpha=1.5, line_width=5, color=color_list, legend=legend_list)
+
     script, div = components(plot)
 
     return script, div
 
 
 from flask import Flask, render_template, request, jsonify, redirect, url_for
-#template_dir = os.path.join(os.getcwd(),'templates','startbootstrap-creative-gh-pages')
 from flask_bootstrap import Bootstrap
-#app = Flask(__name__,template_folder=template_dir)
 app = Flask(__name__)
-bs_app = Bootstrap(app)
+#bs_app = Bootstrap(app)
 
 db = get_metadata()
 defaultheader = "Company Stock to graph"
@@ -209,6 +211,6 @@ def graphCompany(company=None):
         return render_template('input.html', header = defaultheader)
 
 if __name__ == '__main__':
-    app.static_folder = 'static'
-    app.run(debug=True)
+    app.static_folder = 'static' # to render static CSS files
+    app.run(debug=False)
     #app.run(port=33507)
