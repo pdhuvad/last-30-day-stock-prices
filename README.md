@@ -7,6 +7,7 @@ price of the stock.
 
 ## Screenshots
 ![screenshot1](/screenshot1.png)
+<br><br><br><br>
 ![screenshot2](/screenshot2.png)
 
 <br><br><br><br>
