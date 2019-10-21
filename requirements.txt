@@ -4,7 +4,7 @@ Flask-Bootstrap==3.3.7.1
 Flask-Cors==3.0.4
 boto==2.48.0
 bokeh==0.12.16
-urllib3==1.22
+urllib3==1.24.2
 requests==2.18.4
 tornado==5.0.2
 six==1.11.0
